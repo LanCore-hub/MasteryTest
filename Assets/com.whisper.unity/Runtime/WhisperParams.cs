@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using Whisper.Native;
 using Whisper.Utils;
@@ -112,6 +112,12 @@ namespace Whisper
          /// <summary>
          /// Count of threads (n_threads), should be >= 1.
          /// </summary>
+         public int MaxTokens
+         {
+             get => _param.max_tokens;
+             set => _param.max_tokens = value;
+         }
+
          public int ThreadsCount
          {
              get => _param.n_threads;
@@ -121,15 +127,6 @@ namespace Whisper
                      throw new ArgumentException("Number of threads should be bigger or equal one.");
                  _param.n_threads = value;
              }
-         }
-
-         /// <summary>
-         /// Maximum generated tokens per segment; zero leaves the native limit unchanged.
-         /// </summary>
-         public int MaxTokens
-         {
-             get => _param.max_tokens;
-             set => _param.max_tokens = Math.Max(0, value);
          }
 
          /// <summary>

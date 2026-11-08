@@ -589,6 +589,42 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: -20}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &192489908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 392489907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9370225a2ca94276b870d5f87b0db55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  logLevel: 1
+  modelPath: Whisper/ggml-small.bin
+  isModelPathInStreamingAssets: 1
+  initOnAwake: 1
+  useGpu: 0
+  flashAttention: 0
+  language: ru
+  translateToEnglish: 0
+  strategy: 0
+  noContext: 1
+  singleSegment: 1
+  enableTokens: 0
+  initialPrompt: "\u0412\u043F\u0435\u0440\u0435\u0434. \u041D\u0430\u0437\u0430\u0434.
+    \u0412\u043B\u0435\u0432\u043E. \u0412\u043F\u0440\u0430\u0432\u043E. \u0421\u0442\u043E\u043F."
+  stepSec: 3
+  keepSec: 0.2
+  lengthSec: 10
+  updatePrompt: 1
+  dropOldBuffer: 0
+  useVad: 1
+  tokensTimestamps: 0
+  audioCtx: 64
+  maxTokens: 6
+  inferenceThreads: 8
 --- !u!1 &194991435
 GameObject:
   m_ObjectHideFlags: 0
@@ -1092,6 +1128,7 @@ GameObject:
   m_Component:
   - component: {fileID: 392489909}
   - component: {fileID: 392489908}
+  - component: {fileID: 192489908}
   m_Layer: 0
   m_Name: Whisper
   m_TagString: Untagged
@@ -1444,74 +1481,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593767437}
   m_CullTransparentMesh: 1
---- !u!1 &593767868
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 593767870}
-  - component: {fileID: 593767869}
-  m_Layer: 0
-  m_Name: HUD Whisper (early)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &593767869
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 593767868}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9370225a2ca94276b870d5f87b0db55, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  logLevel: 1
-  modelPath: Whisper/ggml-small.bin
-  isModelPathInStreamingAssets: 1
-  initOnAwake: 1
-  useGpu: 0
-  flashAttention: 0
-  language: ru
-  translateToEnglish: 0
-  strategy: 0
-  noContext: 1
-  singleSegment: 1
-  enableTokens: 0
-  initialPrompt: "\u0412\u043F\u0435\u0440\u0435\u0434. \u041D\u0430\u0437\u0430\u0434.
-    \u0412\u043B\u0435\u0432\u043E. \u0412\u043F\u0440\u0430\u0432\u043E. \u0421\u0442\u043E\u043F."
-  stepSec: 3
-  keepSec: 0.2
-  lengthSec: 10
-  updatePrompt: 1
-  dropOldBuffer: 0
-  useVad: 1
-  tokensTimestamps: 0
-  audioCtx: 64
-  maxTokens: 6
-  inferenceThreads: 8
---- !u!4 &593767870
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 593767868}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &600627450
 GameObject:
   m_ObjectHideFlags: 0
@@ -3643,12 +3612,11 @@ MonoBehaviour:
   vadThd: 2
   vadFreqThd: 100
   vadIndicatorImage: {fileID: 0}
-  vadStop: 1
+  vadStop: 0
   dropVadPart: 1
   vadStopTime: 1
   microphoneDropdown: {fileID: 0}
   microphoneDefaultLabel: Default microphone
-  logInputDiagnostics: 0
 --- !u!114 &1299490147
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3658,29 +3626,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 1299490145}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c774d83cf4f4d45e29298522e8ba4923, type: 3}
+  m_Script: {fileID: 11500000, guid: 8a13e935e3bb459a9094c2a7e019721d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   whisper: {fileID: 392489908}
+  smallWhisper: {fileID: 192489908}
   microphoneRecord: {fileID: 1299490146}
-  streamSegments: 0
-  printLanguage: 0
-  earlyVoiceHud: 1
-  hudRecognizer: {fileID: 593767869}
-  hudCheckInterval: 0.15
-  hudFirstAudio: 0.3
-  hudAudioWindow: 1.2
-  voiceThreshold: 0.01
-  testWithoutHardware: 1
-  testMicrophoneName: Thronmax MDrill Zero Plus
+  testModeWithoutVR: 0
+  earlyBufferSec: 0.35
+  earlyRepeatSec: 0.15
+  earlyWindowSec: 1.2
+  speechRmsThreshold: 0.008
+  silenceStopSec: 0.35
+  phraseTimeoutSec: 4
   button: {fileID: 1153390520}
   buttonText: {fileID: 593767439}
   outputText: {fileID: 1849679327}
   timeText: {fileID: 1440888637}
-  languageDropdown: {fileID: 973041342}
-  translateToggle: {fileID: 1509301297}
-  vadToggle: {fileID: 888969764}
-  scroll: {fileID: 1583537439}
   Arrow_sign: {fileID: 693815878}
   Stop_sign: {fileID: 972464309}
   text3D: {fileID: 1785476385}
@@ -5856,4 +5818,3 @@ SceneRoots:
   - {fileID: 392489909}
   - {fileID: 1986862302}
   - {fileID: 1299490148}
-  - {fileID: 593767870}

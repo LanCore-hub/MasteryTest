@@ -111,16 +111,6 @@ namespace Whisper.Utils
         public string RecordStartMicDevice { get; private set; }
         public bool IsRecording { get; private set; }
         public bool IsVoiceDetected { get; private set; }
-        public float InputRms { get; private set; }
-        public float InputPeak { get; private set; }
-        public float CapturePeak { get; private set; }
-        public int InputPosition { get; private set; }
-        public string CaptureError { get; private set; }
-        public bool logInputDiagnostics;
-        private float[] _meterSamples;
-        private bool _inputLogged;
-        private bool _signalLogged;
-        private float _recordStartedAt;
 
         public IEnumerable<string> AvailableMicDevices => Microphone.devices;
 
@@ -161,45 +151,12 @@ namespace Whisper.Utils
                 LogUtils.Verbose($"Mic made a new loop lap, continue recording.");
             }
             _lastMicPos = micPos;
-            UpdateInputMeter(micPos);
 
             // still recording - update chunks and vad
             UpdateChunks(micPos);
             UpdateVad(micPos);
         }
         
-        private void UpdateInputMeter(int micPos)
-        {
-            InputPosition = micPos;
-            if (_clip == null || micPos <= 0) return;
-            int frames = Mathf.Min(512, _clip.samples);
-            if (!_madeLoopLap && micPos < frames) return;
-            int count = frames * _clip.channels;
-            if (_meterSamples == null || _meterSamples.Length != count) _meterSamples = new float[count];
-            int offset = (micPos - frames + _clip.samples) % _clip.samples;
-            if (!_clip.GetData(_meterSamples, offset))
-            {
-                CaptureError = "Не удалось прочитать аудиоданные микрофона.";
-                return;
-            }
-            double energy = 0;
-            float peak = 0;
-            foreach (float sample in _meterSamples)
-            {
-                energy += sample * sample;
-                peak = Mathf.Max(peak, Mathf.Abs(sample));
-            }
-            InputRms = (float)Math.Sqrt(energy / count);
-            InputPeak = peak;
-            CapturePeak = Mathf.Max(CapturePeak, peak);
-            if (logInputDiagnostics && (!_inputLogged && Time.realtimeSinceStartup - _recordStartedAt > 1f || !_signalLogged && peak > 0.001f))
-            {
-                Debug.Log($"[Microphone input] Device='{RecordStartMicDevice ?? "System default"}', position={micPos}, RMS={InputRms:F6}, peak={peak:F6}", this);
-                _inputLogged = true;
-                if (peak > 0.001f) _signalLogged = true;
-            }
-        }
-
         private void UpdateChunks(int micPos)
         {
             // is anyone even subscribe to do this?
@@ -302,19 +259,7 @@ namespace Whisper.Utils
                 return;
             
             RecordStartMicDevice = SelectedMicDevice;
-            CaptureError = null;
-            InputRms = InputPeak = CapturePeak = 0;
-            InputPosition = 0;
-            _inputLogged = _signalLogged = false;
-            _recordStartedAt = Time.realtimeSinceStartup;
-            try { _clip = Microphone.Start(RecordStartMicDevice, loop, maxLengthSec, frequency); }
-            catch (Exception e) { CaptureError = e.Message; IsRecording = false; return; }
-            if (_clip == null)
-            {
-                CaptureError = "Устройство не начало запись. Выберите другой микрофон.";
-                IsRecording = false;
-                return;
-            }
+            _clip = Microphone.Start(RecordStartMicDevice, loop, maxLengthSec, frequency);
             IsRecording = true;
 
             _lastMicPos = 0;
@@ -348,7 +293,6 @@ namespace Whisper.Utils
             // stop mic audio recording
             Microphone.End(RecordStartMicDevice);
             IsRecording = false;
-            InputRms = InputPeak = 0;
             Destroy(_clip);
             LogUtils.Verbose($"Stopped microphone recording. Final audio length " +
                              $"{finalAudio.Length} ({finalAudio.Data.Length} samples)");

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -89,7 +89,7 @@ namespace Whisper
         [Tooltip("[EXPERIMENTAL] Overwrite the audio context size (0 = use default). " +
                  "These can significantly reduce the quality of the output.")]
         public int audioCtx;
-        [Min(0), Tooltip("Maximum tokens per segment; 0 leaves the native limit unchanged.")]
+        [Min(0), Tooltip("Maximum tokens per segment; 0 keeps the native default.")]
         public int maxTokens;
         [Min(0), Tooltip("Inference threads; 0 keeps the native default.")]
         public int inferenceThreads;
@@ -108,17 +108,6 @@ namespace Whisper
         private WhisperWrapper _whisper;
         private WhisperParams _params;
         private readonly MainThreadDispatcher _dispatcher = new MainThreadDispatcher();
-
-        public bool UseGpu
-        {
-            get => useGpu;
-            set
-            {
-                if (IsLoaded || IsLoading)
-                    throw new InvalidOperationException("Set GPU mode before loading the model.");
-                useGpu = value;
-            }
-        }
 
         public string ModelPath
         {
